@@ -135,15 +135,18 @@ const generateNode = (data) => {
 export default {
   name: 'Tree',
   data () {
+    const dataOrr = {
+      children: demeData
+    }
     return {
-      root: generateNode(demeData[0])
+      root: generateNode(dataOrr)
 
     }
   },
   methods: {
     nodeView (node, level) {
       const {name, selected} = node?.data ?? {}
-      return (<div style={`margin-left: ${level * 10}px; display: inline-block`}>
+      return (name && <div style={`margin-left: ${level * 10}px; display: inline-block`}>
         { node.hasChildrenPartialSelected() && `-`}
         <input type='checkbox' checked={selected} onClick={() => this.selectToggle(node)}/>
         {name}
@@ -161,8 +164,9 @@ export default {
     },
     getView(paths, level){
       const node = this.getNode(paths)
+      // eslint-disable-next-line no-debugger
+      // debugger
       const currentNode = this.nodeView(node, level)
-      console.log('paths:::', paths)
       return (<div>
         {currentNode}
         {node?.children?.map((_, index) => this.getView([...paths, index], level + 1))}

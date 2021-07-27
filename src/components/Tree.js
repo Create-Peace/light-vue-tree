@@ -3,7 +3,6 @@
 const TREE_DATA = {selected: false, partialSelected: false}
 class TreeData{
   constructor(data){
-    this.name = 'TreeData'
     this.data = {...TREE_DATA, ...data}
     this.children = []
   }
@@ -26,7 +25,7 @@ class TreeData{
     return this.children.every((child) => child.isSelected())
   }
   hasChildrenPartialSelected(){
-    return !this.isAllChildrenSelected() && this.children.some((child) => child.isSelected() || child.isPartialSelected())
+    return this.children.some((child) => child.isSelected() || child.isPartialSelected())
   }
 }
 
@@ -47,8 +46,8 @@ const demeData = [
                 name: '四级 1-1-1-1',
                 id: '4',
                 children: [],
-                checked: true,
-                disabled: true
+                selected: false,
+                disabled: false
               },
               {
                 name: '四级 1-1-1-2',
@@ -122,8 +121,8 @@ const demeData = [
 ]
 
 const generateNode = (data) => {
-  const {id, name, children} = data
-  const node = new TreeData({id, name})
+  const {children, ...rest} = data
+  const node = new TreeData(rest)
   console.log(node.name)
   children.forEach((child) => {
     // eslint-disable-next-line no-debugger
@@ -145,10 +144,10 @@ export default {
   },
   methods: {
     nodeView (node, level) {
-      const {name, selected} = node?.data ?? {}
+      const {name, selected, disabled, partialSelected} = node?.data ?? {}
       return (name && <div style={`margin-left: ${level * 10}px; display: inline-block`}>
-        { node.hasChildrenPartialSelected() && `-`}
-        <input type='checkbox' checked={selected} onClick={() => this.selectToggle(node)}/>
+        { partialSelected && `-`}
+        <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)}/>
         {name}
       </div>)
     },
@@ -162,14 +161,14 @@ export default {
       })
       return node
     },
-    getView(paths, level){
-      const node = this.getNode(paths)
+    getView(node, level){
+      // const node = this.getNode(paths)
       // eslint-disable-next-line no-debugger
       // debugger
       const currentNode = this.nodeView(node, level)
       return (<div>
         {currentNode}
-        {node?.children?.map((_, index) => this.getView([...paths, index], level + 1))}
+        {node?.children?.map((child) => this.getView(child, level+1))}
       </div>)
     },
     refreshUp({parent}){
@@ -177,7 +176,7 @@ export default {
       const toState = parent.isAllChildrenSelected()
       // eslint-disable-next-line no-debugger
       // debugger
-      Object.assign(parent.data, {selected: toState, partialSelected: parent.hasChildrenPartialSelected()})
+      Object.assign(parent.data, {selected: toState, partialSelected: !toState && parent.hasChildrenPartialSelected()})
       this.refreshUp(parent)
     },
     refreshDown(node){
@@ -205,7 +204,7 @@ export default {
   render () {
     return (
       <div style='text-align: left'>
-        {this.getView([], 0)}
+        {this.getView(this.root, 0)}
       </div>
     )
   }

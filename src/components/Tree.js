@@ -46,14 +46,14 @@ const demeData = [
                 name: '四级 1-1-1-1',
                 id: '4',
                 children: [],
-                selected: false,
+                selected: true,
                 disabled: false
               },
               {
                 name: '四级 1-1-1-2',
                 id: '5',
                 children: [],
-                checked: false
+                selected: true
               }
             ]
           }
@@ -123,7 +123,6 @@ const demeData = [
 const generateNode = (data) => {
   const {children, ...rest} = data
   const node = new TreeData(rest)
-  console.log(node.name)
   children.forEach((child) => {
     // eslint-disable-next-line no-debugger
     node.addChild(generateNode(child))
@@ -131,18 +130,60 @@ const generateNode = (data) => {
   return node
 }
 
+import TreeNode from './TreeNode'
+
 export default {
   name: 'Tree',
+  components: {
+    TreeNode
+  },
   data () {
     const dataOrr = {
       children: demeData
     }
+
+
+
+
     return {
+      dataMap: {},
       root: generateNode(dataOrr)
 
     }
   },
+  created() {
+    // console.log(this.root)
+    this.walk()
+  },
   methods: {
+    walk(root = this.root) {
+      const {children = []} = root
+      // const {selected: parentSelected} = data
+      // let isSelectedAll = false
+      // let partialSelected = false
+      children?.forEach(child => {
+        const { data } = child
+        // eslint-disable-next-line no-debugger
+        // debugger
+        if (data.selected) {
+          this.refreshUp(child)
+
+          // if (!data.parent.data.isSelected) {
+          // }
+          this.refreshDown(child)
+        } else {
+          this.walk(child)
+        }
+        // 如果父级节点选中
+        // if (parentSelected) {
+        //   data.selected = parentSelected
+        // } else {
+        //   isSelectedAll = data.isSelected
+        // }
+        // if (!partialSelected) {
+        //   partialSelected = data.isSelected
+      })
+    },
     nodeView (node, level) {
       const {name, selected, disabled, partialSelected} = node?.data ?? {}
       return (name && <div style={`margin-left: ${level * 10}px; display: inline-block`}>
@@ -204,7 +245,12 @@ export default {
   render () {
     return (
       <div style='text-align: left'>
-        {this.getView(this.root, 0)}
+        {/* {this.getView(this.root, 0)} */}
+        {
+          this.root?.children?.map((node, index) => {
+            return (<TreeNode key={node?.data?.name ?? index} node={node}  />)
+          })
+        }
       </div>
     )
   }

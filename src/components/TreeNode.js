@@ -11,6 +11,11 @@ export default {
       default: 0
     }
   },
+  data() {
+    return {
+      tree: {}
+    }
+  },
   // watch: {
   //   'node.data': {
   //     handler: function(val) {
@@ -23,30 +28,18 @@ export default {
   //     deep: true
   //   }
   // },
+  created() {
+    if (this.$parent.$options.name === 'Tree') {
+      this.tree = this.$parent
+    } else {
+      this.tree = this.$parent.tree
+    }
+  },
   methods: {
-    refreshUp({parent}){
-      if (!parent) return
-      const toState = parent.isAllChildrenSelected()
-      // eslint-disable-next-line no-debugger
-      // debugger
-      Object.assign(parent.data, {selected: toState, partialSelected: !toState && parent.hasChildrenPartialSelected()})
-      this.refreshUp(parent)
-    },
-    refreshDown(node){
-      const toState = node.isSelected()
-      node?.children.forEach((child) => {
-        const fromState = child.isSelected()
-        if(fromState === toState){
-          return
-        }
-        Object.assign(child.data, {selected: toState, partialSelected: false})
-        this.refreshDown(child)
-      })
-    },
     selectToggle(node){
       Object.assign(node.data, {selected: !node.isSelected(), partialSelected: false})
-      this.refreshUp(node)
-      this.refreshDown(node)
+      this.tree.refreshUp(node)
+      this.tree.refreshDown(node)
     },
     nodeView (node, level) {
       const {name, selected, disabled, partialSelected} = node?.data ?? {}

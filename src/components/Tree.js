@@ -141,11 +141,8 @@ export default {
     const dataOrr = {
       children: demeData
     }
-
-
-
-
     return {
+      // isTree: true,
       dataMap: {},
       root: generateNode(dataOrr)
 

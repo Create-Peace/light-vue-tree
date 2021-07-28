@@ -47,7 +47,7 @@ export default {
     nodeView (node, level) {
       const {name, selected, disabled, partialSelected, expanded} = node?.data ?? {}
       return (name && <div style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}>
-        {node.children && node.children.length? expanded ? <span onClick={() => this.toggleFold(node)} style="padding: 2px; background: #eee; cursor: pointer">↑</span> : <span onClick={() => this.toggleFold(node)} style="padding: 2px; background: #eee; cursor: pointer">↓</span> : null}
+        {node.children && node.children.length? expanded ? <span onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : <span onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▼</span> : null}
         { partialSelected && `-`}
         <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />
         {name}

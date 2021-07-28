@@ -1,6 +1,6 @@
 // import { construct } from "core-js/fn/reflect"
 
-const TREE_DATA = {selected: false, partialSelected: false}
+const TREE_DATA = {selected: false, partialSelected: false, expanded: false}
 class TreeData{
   constructor(data){
     this.data = {...TREE_DATA, ...data}
@@ -15,6 +15,9 @@ class TreeData{
   }
   isSelected(){
     return this?.data?.selected ?? false
+  }
+  isExpanded() {
+    return this?.data?.expanded ?? false
   }
   isPartialSelected(){
     return this?.data?.partialSelected ?? false
@@ -167,6 +170,15 @@ export default {
         }
       })
     },
+    refreshExpandedDown(node) {
+      // eslint-disable-next-line no-debugger
+      // debugger
+      const expanded = node.isExpanded()
+      node?.children.forEach((child) => {
+        Object.assign(child.data, {expanded})
+        this.refreshExpandedDown(child)
+      })
+    },
     refreshUp({parent}){
       if (!parent) return
       const toState = parent.isAllChildrenSelected()
@@ -176,7 +188,7 @@ export default {
       this.refreshUp(parent)
     },
     refreshDown(node){
-      const toState = node.isSelected()
+      const toState = node.isSelected() // 这里的名称需要换掉 nodeData 避免混淆
       node?.children.forEach((child) => {
         const fromState = child.isSelected()
         if(fromState === toState){

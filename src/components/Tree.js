@@ -158,59 +158,17 @@ export default {
   methods: {
     walk(root = this.root) {
       const {children = []} = root
-      // const {selected: parentSelected} = data
-      // let isSelectedAll = false
-      // let partialSelected = false
       children?.forEach(child => {
         const { data } = child
         // eslint-disable-next-line no-debugger
         // debugger
         if (data.selected) {
           this.refreshUp(child)
-
-          // if (!data.parent.data.isSelected) {
-          // }
           this.refreshDown(child)
         } else {
           this.walk(child)
         }
-        // 如果父级节点选中
-        // if (parentSelected) {
-        //   data.selected = parentSelected
-        // } else {
-        //   isSelectedAll = data.isSelected
-        // }
-        // if (!partialSelected) {
-        //   partialSelected = data.isSelected
       })
-    },
-    nodeView (node, level) {
-      const {name, selected, disabled, partialSelected} = node?.data ?? {}
-      return (name && <div style={`margin-left: ${level * 10}px; display: inline-block`}>
-        { partialSelected && `-`}
-        <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)}/>
-        {name}
-      </div>)
-    },
-    getNode(paths) {
-      let node = this.root
-      // eslint-disable-next-line no-debugger
-      // debugger
-      // 通过索引找到对应的元素
-      paths.forEach((path) => {
-        node = node.children[path]
-      })
-      return node
-    },
-    getView(node, level){
-      // const node = this.getNode(paths)
-      // eslint-disable-next-line no-debugger
-      // debugger
-      const currentNode = this.nodeView(node, level)
-      return (<div>
-        {currentNode}
-        {node?.children?.map((child) => this.getView(child, level+1))}
-      </div>)
     },
     refreshUp({parent}){
       if (!parent) return
@@ -231,16 +189,6 @@ export default {
         this.refreshDown(child)
       })
     },
-    selectToggle(node){
-
-      console.log("1:", node)
-      Object.assign(node.data, {selected: !node.isSelected(), partialSelected: false})
-      console.log("2:", node)
-      this.refreshUp(node)
-      console.log("3:", node)
-      this.refreshDown(node)
-      console.log("4:", node)
-    }
   },
   render () {
     return (

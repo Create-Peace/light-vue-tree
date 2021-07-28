@@ -38,6 +38,9 @@ export default {
   methods: {
     selectToggle(node){
       Object.assign(node.data, {selected: !node.isSelected(), partialSelected: false})
+      if (this.tree.checkStrictly) {
+        return
+      }
       this.tree.refreshUp(node)
       this.tree.refreshDown(node)
     },
@@ -61,7 +64,6 @@ export default {
 
   render () {
     const { node, level } = this
-    console.log(node)
     const currentNode = this.nodeView(node, level)
     return (<div>
       {currentNode}

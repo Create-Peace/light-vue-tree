@@ -3,6 +3,7 @@
 const TREE_DATA = {selected: false, partialSelected: false, expanded: false}
 class TreeData{
   constructor(data){
+    console.log(data)
     this.data = {...TREE_DATA, ...data}
     this.children = []
   }
@@ -123,12 +124,12 @@ const demeData = [
   }
 ]
 
-const generateNode = (data) => {
+const generateNode = (data, props) => {
   const {children, ...rest} = data
-  const node = new TreeData(rest)
+  const node = new TreeData({...rest, ...props}) // TODO 初始化带有 expandedAll
   children.forEach((child) => {
     // eslint-disable-next-line no-debugger
-    node.addChild(generateNode(child))
+    node.addChild(generateNode(child, props))
   })
   return node
 }
@@ -140,15 +141,25 @@ export default {
   components: {
     TreeNode
   },
+  props: {
+    expandedAll: {
+      type: Boolean,
+      default: true
+    },
+    checkStrictly: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     const dataOrr = {
       children: demeData
     }
+
     return {
       // isTree: true,
       dataMap: {},
-      root: generateNode(dataOrr)
-
+      root: generateNode(dataOrr, {expanded: this.expandedAll})
     }
   },
   created() {
@@ -157,6 +168,7 @@ export default {
   },
   methods: {
     walk(root = this.root) {
+      if (this.checkStrictly) return
       const {children = []} = root
       children?.forEach(child => {
         const { data } = child

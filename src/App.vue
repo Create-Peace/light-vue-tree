@@ -3,7 +3,7 @@
     <Tree :tree-data="demeData" 
       show-checkbox 
       hasHalfelEction
-      checkStrictly
+      draggable
       @on-checkbox-change="handleChangeCheckBox" 
       @on-checked-item="handleChangeItem">
       <!-- <template v-slot="{node}">

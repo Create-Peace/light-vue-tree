@@ -50,10 +50,12 @@ export default {
     },
     nodeView (node, level) {
       const {name, selected, disabled, partialSelected, expanded} = node?.data ?? {}
-      const { renderTreeNode, $scopedSlots: { default: defaultSlot }} = this.tree
+      const { renderTreeNode, $scopedSlots: { default: defaultSlot } } = this.tree
 
-      return (name && <div style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}>
-        {node.children && node.children.length? <span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : null}
+      return (name && <div
+       style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}
+       >
+        {node.children && node.children.length? <span class={['icon', 'sh__expand-icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : null}
         { partialSelected && `-`}
         {this.tree.showCheckbox && <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />}
         { renderTreeNode ? renderTreeNode(node) : defaultSlot? defaultSlot({node}): <span>{name}</span> }
@@ -65,13 +67,25 @@ export default {
         this.tree.refreshExpandedDown(node)
       }
     },
+    handleDragStart(e, treeNode) {
+      console.log('treeNode', treeNode)
+    }
     
   },
 
   render () {
     const { node, level } = this
     const currentNode = this.nodeView(node, level)
-    return (<div>
+    const {  draggable, dragStart, dragOver, dragEnd, handleDrop} = this.tree
+    // console.log(dragStart)
+
+    return (<div
+      draggable={draggable}
+      onDragstart={(e) => dragStart(e, this)}
+      onDragover={(e) => dragOver(e, this)}
+      onDragend={(e) => dragEnd(e, this)}
+      onDrop={handleDrop}
+    >
       {currentNode}
       {
         node?.data?.expanded && node.children?.map(subNode => {

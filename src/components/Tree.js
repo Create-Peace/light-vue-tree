@@ -1,39 +1,4 @@
-// import { construct } from "core-js/fn/reflect"
-
-const TREE_DATA = { selected: false, partialSelected: false, expanded: false };
-class TreeData {
-  constructor(data) {
-    this.data = { ...TREE_DATA, ...data };
-    this.children = [];
-  }
-  setParent(node) {
-    this.parent = node;
-  }
-  addChild(node) {
-    this.children.push(node);
-    node.setParent(this);
-  }
-  isSelected() {
-    return this?.data?.selected ?? false;
-  }
-  isExpanded() {
-    return this?.data?.expanded ?? false;
-  }
-  isPartialSelected() {
-    return this?.data?.partialSelected ?? false;
-  }
-  // TODO 这里两个方法需要合并一下
-  isAllChildrenSelected() {
-    // eslint-disable-next-line no-debugger
-    // debugger
-    return this.children.every((child) => child.isSelected());
-  }
-  hasChildrenPartialSelected() {
-    return this.children.some(
-      (child) => child.isSelected() || child.isPartialSelected()
-    );
-  }
-}
+import TreeData from './TreeData'
 
 const generateNode = (data, props) => {
   const { children, ...rest } = data;
@@ -191,7 +156,12 @@ export default {
         this.refreshDown(child);
       });
     },
+    handleDrop(event) {
+      event.stopPropagation()
+    },
     dragStart(event, treeNode) {
+      console.log('dratstart')
+      event.stopPropagation()
       if (
         typeof this.allowDrag === "function" &&
         !this.allowDrag(treeNode.node)
@@ -209,10 +179,12 @@ export default {
       } catch (e) {
         console.error(e);
       }
-      this.draggingNode = treeNode;
+      this.dragInfo.draggingNode = treeNode;
+      console.log('this.dragInfo.draggingNode', this.dragInfo.draggingNode)
       this.$emit("node-drag-start", treeNode.node, event);
     },
     dragOver(event) {
+      event.stopPropagation()
       const dragInfo = this.dragInfo;
       const dropNode = findNearestComponent(event.target, "TreeNode");
       const oldDropNode = dragInfo.dropNode;
@@ -251,6 +223,7 @@ export default {
       if (dropPrev || dropInner || dropNext) {
         dragInfo.dropNode = dropNode;
       }
+      console.log('dropNode', dropNode)
       // TODO 这里的逻辑需要实现
       if (dropNode.node.nextSibling === draggingNode.node) {
         dropNext = false;
@@ -303,7 +276,7 @@ export default {
       }
 
       const iconPosition = dropNode.$el
-        .querySelector("sh__expand-icon")
+        .querySelector(".sh__expand-icon")
         .getBoundingClientRect();
       const dropIndicator = this.$refs.dropIndicator;
       if (dropType === "before") {
@@ -327,6 +300,7 @@ export default {
       this.$emit("node-drag-over", draggingNode.node, dropNode.node, event);
     },
     dragEnd(event) {
+      event.stopPropagation()
       const dragInfo = this.dragInfo;
       const { draggingNode, dropType, dropNode } = dragInfo;
       event.preventDefault();
@@ -344,9 +318,9 @@ export default {
         } else if (dropType === "inner") {
           dropNode.node.insertChild(draggingNodeCopy);
         }
-        if (dropType !== "none") {
+        // if (dropType !== "none") {
           // this.store.registerNode(draggingNodeCopy);
-        }
+        // }
 
         removeClass(dropNode.$el, "is-drop-inner");
 
@@ -384,6 +358,10 @@ export default {
         {this.root?.children?.map((node, index) => {
           return <TreeNode key={node?.data?.name ?? index} node={node} />;
         })}
+        <div
+        style={{display: this.dragInfo.showDropIndicator? 'none' : 'block'}}
+      class="el-tree__drop-indicator"
+      ref="dropIndicator"></div>
       </div>
     );
   },

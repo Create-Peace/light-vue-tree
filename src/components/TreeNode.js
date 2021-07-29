@@ -38,19 +38,25 @@ export default {
   methods: {
     selectToggle(node){
       Object.assign(node.data, {selected: !node.isSelected(), partialSelected: false})
-      if (this.tree.checkStrictly) {
-        return
+      if (!this.tree.checkStrictly) {
+        this.tree.refreshUp(node)
+        this.tree.refreshDown(node)
+      } else {
+        this.tree.getCheckedValue(node)
       }
-      this.tree.refreshUp(node)
-      this.tree.refreshDown(node)
+      
+      this.tree.$emit('on-checkbox-change', this.tree.checkedNodes, this.tree.checkedNodeKeys)
+      this.tree.$emit('on-checked-item', node.data)
     },
     nodeView (node, level) {
       const {name, selected, disabled, partialSelected, expanded} = node?.data ?? {}
+      const { renderTreeNode, $scopedSlots: { default: defaultSlot }} = this.tree
+
       return (name && <div style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}>
-        {node.children && node.children.length? expanded ? <span onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : <span onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▼</span> : null}
+        {node.children && node.children.length? <span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : null}
         { partialSelected && `-`}
-        <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />
-        {name}
+        {this.tree.showCheckbox && <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />}
+        { renderTreeNode ? renderTreeNode(node) : defaultSlot? defaultSlot({node}): <span>{name}</span> }
       </div>)
     },
     toggleFold(node) {

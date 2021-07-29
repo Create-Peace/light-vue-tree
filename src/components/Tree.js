@@ -35,97 +35,6 @@ class TreeData {
   }
 }
 
-const demeData = [
-  {
-    name: "一级 1",
-    id: "1",
-    children: [
-      {
-        name: "二级 1-1",
-        id: "2",
-        children: [
-          {
-            name: "三级 1-1-1",
-            id: "3",
-            children: [
-              {
-                name: "四级 1-1-1-1",
-                id: "4",
-                children: [],
-                selected: true,
-                disabled: false,
-              },
-              {
-                name: "四级 1-1-1-2",
-                id: "5",
-                children: [],
-                selected: true,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "二级 1-2",
-        id: "8",
-        children: [
-          {
-            name: "三级 1-2-1",
-            id: "9",
-            children: [
-              {
-                name: "四级 1-2-1-1",
-                id: "10",
-                children: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "一级 2",
-    id: "11",
-    children: [
-      {
-        name: "二级 2-1",
-        id: "12",
-        children: [
-          {
-            name: "三级 2-1-1",
-            id: "13",
-            children: [
-              {
-                name: "四级 2-1-1-1",
-                id: "14",
-                children: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: "二级 2-2",
-        id: "15",
-        children: [
-          {
-            name: "三级 2-2-1",
-            id: "16",
-            children: [
-              {
-                name: "四级 2-2-1-1",
-                id: "17",
-                children: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
-
 const generateNode = (data, props) => {
   const { children, ...rest } = data;
   const node = new TreeData({ ...rest, ...props });
@@ -151,13 +60,40 @@ export default {
     },
     checkStrictly: {
       type: Boolean,
-      default: false,
+      default: false
     },
+    draggable: {
+      type: Boolean,
+      default: false
+    },
+    renderTreeNode: {
+      type: Function
+    },
+    searchVal: {
+      type: String
+    },
+    hasHalfelEction: {
+      type: Boolean
+    },
+    icon: {
+      type: String,
+      default: 'icon-down'
+    },
+    showCheckbox: {
+      type: Boolean,
+      default: false
+    },
+    treeData: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    }
   },
   data() {
     const dataOrr = {
-      children: demeData,
-    };
+      children: this.treeData
+    }
 
     return {
       // isTree: true,
@@ -168,28 +104,33 @@ export default {
         draggingNode: null,
         dropNode: null,
         allowDrop: true,
+        isInitData: false
       },
-    };
+      checkedNodes: [],
+      checkedNodeKeys: []
+    }
   },
   created() {
-    // console.log(this.root)
     this.walk();
+    console.log(this.checkedNodeKeys)
+    console.log(this.checkedNodes)
+
   },
   methods: {
     walk(root = this.root) {
-      if (this.checkStrictly) return;
       const { children = [] } = root;
       children?.forEach((child) => {
         const { data } = child;
-        // eslint-disable-next-line no-debugger
-        // debugger
-        if (data.selected) {
+        // TODO 保存选中的值
+        this.getCheckedValue(child)
+        if (data.selected && !this.checkStrictly) {
           this.refreshUp(child);
           this.refreshDown(child);
         } else {
           this.walk(child);
         }
       });
+      this.isInitData = true
     },
     refreshExpandedDown(node) {
       // eslint-disable-next-line no-debugger
@@ -200,28 +141,53 @@ export default {
         this.refreshExpandedDown(child);
       });
     },
-    refreshUp({ parent }) {
-      if (!parent) return;
-      const toState = parent.isAllChildrenSelected();
+    getCheckedValue (node) {
       // eslint-disable-next-line no-debugger
       // debugger
+      if (!node.data.id) return
+      const index = this.checkedNodeKeys.findIndex(item => item === node.data.id)
+      // eslint-disable-next-line no-debugger
+      // debugger
+      // 当前的节点(选中 || 半选) && notExist
+      if (node.isSelected() || (this.hasHalfelEction && node.isPartialSelected())) {
+        if (index < 0){
+          this.checkedNodeKeys.push(node.data.id)
+          this.checkedNodes.push(node.data)
+        }
+      } else if (index >= 0) {  // 当前的节点 !(选中 || 半选) && exist
+        this.checkedNodeKeys.splice(index, 1)
+        this.checkedNodes.splice(index, 1)
+      }
+    },
+    refreshUp(node) {
+      const { parent } = node
+      this.getCheckedValue(node)
+      if (!parent) return
+      const toState = parent.isAllChildrenSelected()
+      const partialSelected = !toState && parent.hasChildrenPartialSelected()
       Object.assign(parent.data, {
         selected: toState,
-        partialSelected: !toState && parent.hasChildrenPartialSelected(),
-      });
+        partialSelected
+      })
+      // eslint-disable-next-line no-debugger
+      // debugger
+      
       this.refreshUp(parent);
     },
     refreshDown(node) {
       const toState = node.isSelected(); // 这里的名称需要换掉 nodeData 避免混淆
       node?.children.forEach((child) => {
         const fromState = child.isSelected();
-        if (fromState === toState) {
-          return;
+        // TODO  遍历children 初始化数据  不能直接跳出
+        if (fromState === toState || !this.isInitData) {
+          return
         }
+        
         Object.assign(child.data, {
           selected: toState,
           partialSelected: false,
         });
+        this.getCheckedValue(child)
         this.refreshDown(child);
       });
     },

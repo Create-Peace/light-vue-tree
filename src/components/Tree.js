@@ -78,7 +78,6 @@ export default {
   },
   created() {
     this.initData(); //init
-    // this.isInitData = true // 
     console.log(this.checkedNodeKeys)
     console.log(this.checkedNodes)
 
@@ -100,8 +99,6 @@ export default {
       node?.children?.forEach((child) => this.recurTree(child, db))
     },
     refreshExpandedDown(node) {
-      // eslint-disable-next-line no-debugger
-      // debugger
       const expanded = node.isExpanded();
       node?.children.forEach((child) => {
         Object.assign(child.data, { expanded });
@@ -109,13 +106,8 @@ export default {
       });
     },
     getCheckedValue (node) {
-      // eslint-disable-next-line no-debugger
-      // debugger
       if (!node.data.id) return
       const index = this.checkedNodeKeys.findIndex(item => item === node.data.id)
-      // eslint-disable-next-line no-debugger
-      // debugger
-      // 当前的节点(选中 || 半选) && notExist
       if (node.isSelected() || (this.hasHalfelEction && node.isPartialSelected())) {
         if (index < 0){
           this.checkedNodeKeys.push(node.data.id)
@@ -136,8 +128,6 @@ export default {
         selected: toState,
         partialSelected
       })
-      // eslint-disable-next-line no-debugger
-      // debugger
       
       this.refreshUp(parent);
     },
@@ -353,7 +343,6 @@ export default {
   render() {
     return (
       <div class="tree" style="text-align: left">
-        {/* {this.getView(this.root, 0)} */}
         {this.root?.children?.map((node, index) => {
           return <TreeNode key={node?.data?.name ?? index} node={node} />;
         })}

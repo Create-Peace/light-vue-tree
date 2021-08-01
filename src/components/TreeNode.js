@@ -16,18 +16,6 @@ export default {
       tree: {}
     }
   },
-  // watch: {
-  //   'node.data': {
-  //     handler: function(val) {
-  //       if (val.selected) {
-  //         // this.dispatch('')
-          
-  //       }
-  //     },
-  //     immediate: true,
-  //     deep: true
-  //   }
-  // },
   created() {
     if (this.$parent.$options.name === 'Tree') {
       this.tree = this.$parent
@@ -67,9 +55,6 @@ export default {
       if (!node.data.expanded) {
         this.tree.refreshExpandedDown(node)
       }
-    },
-    handleDragStart(e, treeNode) {
-      console.log('treeNode', treeNode)
     }
     
   },

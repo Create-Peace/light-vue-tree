@@ -21,7 +21,7 @@ export default {
   props: {
     expandedAll: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     checkStrictly: {
       type: Boolean,
@@ -72,30 +72,45 @@ export default {
         isInitData: false
       },
       checkedNodes: [],
-      checkedNodeKeys: []
+      checkedNodeKeys: [],
+      selectedNodes: []
     }
   },
   created() {
-    this.walk();
+    this.initData(); //init
+    // this.isInitData = true // 
     console.log(this.checkedNodeKeys)
     console.log(this.checkedNodes)
 
   },
   methods: {
-    walk(root = this.root) {
-      const { children = [] } = root;
-      children?.forEach((child) => {
+    initData(root = this.root) {
+      // const { children = [] } = root;
+      /*children?.forEach((child) => {
         const { data } = child;
         // TODO 保存选中的值
         this.getCheckedValue(child)
         if (data.selected && !this.checkStrictly) {
-          this.refreshUp(child);
+          // this.refreshUp(child);
+
           this.refreshDown(child);
         } else {
-          this.walk(child);
+          this.initData(child);
         }
-      });
-      this.isInitData = true
+      });*/
+      const selectedNodes = []
+      this.recurTree(root, selectedNodes)
+      selectedNodes.forEach((node) => {
+        this.refreshUp(node)
+        this.refreshDown(node)
+      })
+      this.recurTree(root, this.selectedNodes)
+    },
+    recurTree(node, db){
+      if(node.isSelected()){
+        db.push(node)
+      }
+      node?.children?.forEach((child) => this.recurTree(child, db))
     },
     refreshExpandedDown(node) {
       // eslint-disable-next-line no-debugger
@@ -144,7 +159,7 @@ export default {
       node?.children.forEach((child) => {
         const fromState = child.isSelected();
         // TODO  遍历children 初始化数据  不能直接跳出
-        if (fromState === toState || !this.isInitData) {
+        if (fromState === toState) {
           return
         }
         
@@ -223,7 +238,7 @@ export default {
       if (dropPrev || dropInner || dropNext) {
         dragInfo.dropNode = dropNode;
       }
-      console.log('dropNode', dropNode)
+      // console.log('dropNode', dropNode)
       // TODO 这里的逻辑需要实现
       if (dropNode.node.nextSibling === draggingNode.node) {
         dropNext = false;
@@ -359,7 +374,7 @@ export default {
           return <TreeNode key={node?.data?.name ?? index} node={node} />;
         })}
         <div
-        style={{display: this.dragInfo.showDropIndicator? 'none' : 'block'}}
+        style={{display: this.dragInfo.showDropIndicator? 'block': 'none'}}
       class="el-tree__drop-indicator"
       ref="dropIndicator"></div>
       </div>

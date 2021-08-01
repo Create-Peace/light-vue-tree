@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <Tree :tree-data="demeData" 
+      expandedAll
       show-checkbox 
       hasHalfelEction
       draggable
@@ -12,6 +13,7 @@
         <span class="icon">-</span>
       </template> -->
     </Tree>
+    <!-- <List :data="baseData" bordered /> -->
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
      <!-- <Dropdown @on-click="handleClick" trigger="click">
         <DropdownMenu transfer slot="dropdownList">
@@ -25,6 +27,7 @@
 
 <script>
 import Tree from './components/Tree'
+import Mock from './utils/mock'
 export default {
   name: 'App',
   components: {
@@ -32,6 +35,7 @@ export default {
   },
   data () {
     return {
+      baseData: [],
       demeData: [
   {
     name: "一级 1",
@@ -44,19 +48,19 @@ export default {
           {
             name: "三级 1-1-1",
             id: "3",
+            selected: true,
             children: [
               {
                 name: "四级 1-1-1-1",
                 id: "4",
                 children: [],
-                selected: true,
                 disabled: false,
               },
               {
                 name: "四级 1-1-1-2",
                 id: "5",
                 children: [],
-                selected: true,
+                // selected: true,
               },
             ],
           },
@@ -124,7 +128,26 @@ export default {
 ]
     }
   },
+  created () {
+    this.genBaseData()
+  },
   methods: {
+    genBaseData () {
+        const start = Math.round(Math.random())
+        const end = start + Math.round(Math.random() * 4)
+        const res = Mock.mock({
+          'data|10': [
+            {
+              'id': /[a-z]{2}[A-Z]{2}[0-9]/,
+              'status|1': ['success', 'fail'],
+              'tags|1-2': ['success', 'normal', 'warning', 'error'].slice(start, end),
+              'time': '@date("yyyy-MM-dd")',
+              'name': "@ctitle(4,6)",
+            }
+          ]
+        })
+        this.baseData = res.data
+      },
     handleClick (data) {
       console.log(data)
     },
@@ -176,5 +199,12 @@ export default {
 }
 .rotate-motion(rotate90, 90deg);
 .rotate-motion(rotate180, 180deg);
+.el-tree__drop-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #409eff;
+}
   
 </style>

@@ -7,10 +7,10 @@ const cdn = {
     'shsc-ui': 'shscUI'
   },
   css: [
-    'https://testcdnqiniu.shuhaisc.com/shsc-ui/3.5.6/index.css'
+    'https://uatcdnqiniu.shuhaisc.com/shsc-ui/3.5.7/index.css'
   ],
   js: [
-    'https://testcdnqiniu.shuhaisc.com/shsc-ui/3.5.6/index.umd.min.js'
+    'https://uatcdnqiniu.shuhaisc.com/shsc-ui/3.5.7/index.umd.min.js'
   ]
 }
 

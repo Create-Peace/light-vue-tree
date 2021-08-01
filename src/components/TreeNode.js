@@ -55,13 +55,13 @@ export default {
       return (name && <div
        style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}
        >
-        {node.children && node.children.length? <span class={['icon', 'sh__expand-icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.toggleFold(node)} style="padding: 1px; background: #eee; cursor: pointer">▲</span> : null}
+        {<span class={['icon', 'sh__expand-icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.foldToggle(node)} style={{padding: 1,  background: '#eee', cursor: 'pointer', visibility: node.children && node.children.length ? 'visible' : 'hidden'}}>▲</span>}
         { partialSelected && `-`}
         {this.tree.showCheckbox && <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />}
         { renderTreeNode ? renderTreeNode(node) : defaultSlot? defaultSlot({node}): <span>{name}</span> }
       </div>)
     },
-    toggleFold(node) {
+    foldToggle(node) {
       Object.assign(node.data, {expanded: !node.data.expanded})
       if (!node.data.expanded) {
         this.tree.refreshExpandedDown(node)

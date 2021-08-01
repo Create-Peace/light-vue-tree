@@ -7,8 +7,12 @@ export default class TreeData {
   setParent(node) {
     this.parent = node;
   }
-  addChild(node) {
-    this.children.push(node);
+  addChild(node, index = -1) {
+    if(index === -1){
+      this.children.push(node);
+    }else{
+      this.children.splice(index, 0, node)
+    }
     node.setParent(this);
   }
   isSelected() {
@@ -107,6 +111,19 @@ export default class TreeData {
     } else {
       this.children.splice(index, 0, child);
     }
+  }
+
+  moveNode(node, toParent, toIndex = -1){
+    const fromIndex = this.getIndex(node)
+    node.parent.children.splice(fromIndex, 1)
+    toParent.addChild(node, toIndex)
+  }
+
+  getIndex(node){
+    if(!node?.parent){
+      return 0
+    }
+    return node.parent.indexOf(node)
   }
   
 }

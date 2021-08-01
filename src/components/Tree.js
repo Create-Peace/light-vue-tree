@@ -253,7 +253,6 @@ export default {
       let indicatorTop = -9999;
       const distance = event.clientY - targetPosition.top;
 
-      console.log('distance', distance)
       if (distance < targetPosition.height * prevPercent) {
         dropType = "before";
       } else if (distance > targetPosition.height * nextPercent) {

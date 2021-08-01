@@ -206,5 +206,20 @@ export default {
     height: 1px;
     background-color: #409eff;
 }
-  
+
+
+
+.tree {
+  position: relative;
+  .tree-node {
+      padding: 4px 0;
+     .tree-node-name {
+      display: inline-block;
+    }
+  }
+  .is-drop-inner > .tree-node-content > .tree-node-name {
+    background-color: #409eff;
+    color: #fff;
+  }
+}
 </style>

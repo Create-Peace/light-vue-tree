@@ -85,19 +85,6 @@ export default {
   },
   methods: {
     initData(root = this.root) {
-      // const { children = [] } = root;
-      /*children?.forEach((child) => {
-        const { data } = child;
-        // TODO 保存选中的值
-        this.getCheckedValue(child)
-        if (data.selected && !this.checkStrictly) {
-          // this.refreshUp(child);
-
-          this.refreshDown(child);
-        } else {
-          this.initData(child);
-        }
-      });*/
       const selectedNodes = []
       this.recurTree(root, selectedNodes)
       selectedNodes.forEach((node) => {
@@ -175,7 +162,6 @@ export default {
       event.stopPropagation()
     },
     dragStart(event, treeNode) {
-      console.log('dratstart')
       event.stopPropagation()
       if (
         typeof this.allowDrag === "function" &&
@@ -195,7 +181,6 @@ export default {
         console.error(e);
       }
       this.dragInfo.draggingNode = treeNode;
-      console.log('this.dragInfo.draggingNode', this.dragInfo.draggingNode)
       this.$emit("node-drag-start", treeNode.node, event);
     },
     dragOver(event) {
@@ -238,15 +223,12 @@ export default {
       if (dropPrev || dropInner || dropNext) {
         dragInfo.dropNode = dropNode;
       }
-      // console.log('dropNode', dropNode)
-      // TODO 这里的逻辑需要实现
       if (dropNode.node.nextSibling === draggingNode.node) {
         dropNext = false;
       }
       if (dropNode.node.previousSibling === draggingNode.node) {
         dropPrev = false;
       }
-      // TODO contains  需要实现
       if (dropNode.node.contains(draggingNode.node, false)) {
         dropInner = false;
       }
@@ -280,6 +262,8 @@ export default {
 
       let indicatorTop = -9999;
       const distance = event.clientY - targetPosition.top;
+
+      console.log('distance', distance)
       if (distance < targetPosition.height * prevPercent) {
         dropType = "before";
       } else if (distance > targetPosition.height * nextPercent) {
@@ -322,7 +306,8 @@ export default {
       event.dataTransfer.dropEffect = "move";
 
       if (draggingNode && dropNode) {
-        const draggingNodeCopy = { data: draggingNode.node.data };
+        // const draggingNodeCopy = { data: draggingNode.node.data };node
+        const draggingNodeCopy = draggingNode.node
         if (dropType !== "none") {
           draggingNode.node.remove();
         }
@@ -333,9 +318,6 @@ export default {
         } else if (dropType === "inner") {
           dropNode.node.insertChild(draggingNodeCopy);
         }
-        // if (dropType !== "none") {
-          // this.store.registerNode(draggingNodeCopy);
-        // }
 
         removeClass(dropNode.$el, "is-drop-inner");
 
@@ -355,6 +337,7 @@ export default {
             event
           );
         }
+        this.initData()
       }
       if (draggingNode && !dropNode) {
         this.$emit("node-drag-end", draggingNode.node, null, dropType, event);
@@ -365,10 +348,11 @@ export default {
       dragInfo.dropNode = null;
       dragInfo.allowDrop = true;
     },
+
   },
   render() {
     return (
-      <div style="text-align: left">
+      <div class="tree" style="text-align: left">
         {/* {this.getView(this.root, 0)} */}
         {this.root?.children?.map((node, index) => {
           return <TreeNode key={node?.data?.name ?? index} node={node} />;

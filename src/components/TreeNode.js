@@ -53,12 +53,13 @@ export default {
       const { renderTreeNode, $scopedSlots: { default: defaultSlot } } = this.tree
 
       return (name && <div
-       style={`margin-left: ${level * 10}px; margin-bottom: 6px; display: inline-block;`}
+      class="tree-node-content"
+       style={`margin-left: ${level * 10}px; display: inline-block;`}
        >
         {<span class={['icon', 'sh__expand-icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.foldToggle(node)} style={{padding: 1,  background: '#eee', cursor: 'pointer', visibility: node.children && node.children.length ? 'visible' : 'hidden'}}>▲</span>}
         { partialSelected && `-`}
         {this.tree.showCheckbox && <input type='checkbox' disabled={disabled} checked={selected} onClick={() => this.selectToggle(node)} />}
-        { renderTreeNode ? renderTreeNode(node) : defaultSlot? defaultSlot({node}): <span>{name}</span> }
+        <div class='tree-node-name'>{ renderTreeNode ? renderTreeNode(node) : defaultSlot? defaultSlot({node}): <span>{name}</span> }</div>
       </div>)
     },
     foldToggle(node) {
@@ -77,13 +78,13 @@ export default {
     const { node, level } = this
     const currentNode = this.nodeView(node, level)
     const {  draggable, dragStart, dragOver, dragEnd, handleDrop} = this.tree
-    // console.log(dragStart)
 
     return (<div
+      class="tree-node"
       draggable={draggable}
       onDragstart={(e) => dragStart(e, this)}
-      onDragover={(e) => dragOver(e, this)}
-      onDragend={(e) => dragEnd(e, this)}
+      onDragover={(e) => dragOver(e)}
+      onDragend={(e) => dragEnd(e)}
       onDrop={handleDrop}
     >
       {currentNode}

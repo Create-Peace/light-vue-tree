@@ -105,7 +105,7 @@ export default class TreeData {
   }
 
   insertChild(child, index) {
-
+    child.parent = this
     if (typeof index === 'undefined' || index < 0) {
       this.children.push(child);
     } else {

@@ -71,26 +71,22 @@ export default {
         allowDrop: true,
         isInitData: false
       },
-      checkedNodes: [],
-      checkedNodeKeys: [],
-      selectedNodes: []
+      checkedNodes: []
     }
   },
   created() {
     this.initData(); //init
-    console.log(this.checkedNodeKeys)
-    console.log(this.checkedNodes)
 
   },
   methods: {
     initData(root = this.root) {
-      const selectedNodes = []
-      this.recurTree(root, selectedNodes)
-      selectedNodes.forEach((node) => {
+      const checkedNodes = []
+      this.recurTree(root, checkedNodes)
+      checkedNodes.forEach((node) => {
         this.refreshUp(node)
         this.refreshDown(node)
       })
-      this.recurTree(root, this.selectedNodes)
+      this.recurTree(root, this.checkedNodes)
     },
     recurTree(node, db){
       if(node.isSelected()){
@@ -107,14 +103,12 @@ export default {
     },
     getCheckedValue (node) {
       if (!node.data.id) return
-      const index = this.checkedNodeKeys.findIndex(item => item === node.data.id)
+      const index = this.checkedNodes.findIndex(item => item === node)
       if (node.isSelected() || (this.hasHalfelEction && node.isPartialSelected())) {
         if (index < 0){
-          this.checkedNodeKeys.push(node.data.id)
           this.checkedNodes.push(node.data)
         }
       } else if (index >= 0) {  // 当前的节点 !(选中 || 半选) && exist
-        this.checkedNodeKeys.splice(index, 1)
         this.checkedNodes.splice(index, 1)
       }
     },

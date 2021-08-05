@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Tree :tree-data="demeData" 
+    <Tree 
+      :tree-data="demeData" 
       expandedAll
       show-checkbox 
       hasHalfelEction
@@ -35,6 +36,7 @@ export default {
   },
   data () {
     return {
+      visible: true,
       baseData: [],
       demeData: [
   {
@@ -48,7 +50,7 @@ export default {
           {
             name: "三级 1-1-1",
             id: "3",
-            selected: true,
+            checked: true,
             children: [
               {
                 name: "四级 1-1-1-1",
@@ -128,10 +130,25 @@ export default {
 ]
     }
   },
+  watch: {
+    visible: {
+      handler: function(val) {
+        if (!val) {
+          this.genBaseData()
+        } else {
+          this.genBaseData()
+        }
+      }
+    }
+  },
   created () {
     this.genBaseData()
+    console.log(this.baseData)
   },
   methods: {
+    toggleVisible () {
+      this.visible = !this.visible
+    },
     genBaseData () {
         const start = Math.round(Math.random())
         const end = start + Math.round(Math.random() * 4)
@@ -173,15 +190,87 @@ export default {
 </style>
 <style lang="less">
 @transition-time        : .2s;
+@primary-color: #409eff;
+@background-color-base: #F1F3F5;
+@normal-color: #1F2E4D;
+@unimportance-color: #b7beca;
+@border-radius-small    : 3px;
+
+.frame {
+  // position: absolute;
+  height: 300px;
+  background: #eee;
+
+}
 
 .icon {
   display: inline-block;
   padding: 2px;
   font-size: 12px;
-  background: #eee;
+  // background: #eee;
   cursor: pointer;
   margin-right: 4px;
 }
+
+.motion-common() {
+    animation-duration: .3s;
+    animation-fill-mode: both;
+}
+
+.move-motion(@className, @keyframeName) {
+    .make-motion(@className, @keyframeName);
+    .@{className}-enter-active {
+        animation-timing-function: ease-in-out;
+    }
+    .@{className}-leave-active {
+        animation-timing-function: ease-in-out;
+    }
+}
+
+.make-motion(@className, @keyframeName) {
+    .@{className}-enter-active {
+        .motion-common();
+        animation-play-state: paused;
+    }
+    .@{className}-leave-active {
+        .motion-common();
+        animation-play-state: paused;
+    }
+    .@{className}-enter-active {
+        animation-name: ~"@{keyframeName}In";
+        animation-play-state: running;
+    }
+    .@{className}-leave-active {
+        animation-name: ~"@{keyframeName}Out";
+        animation-play-state: running;
+    }
+}
+
+.move-motion(transition-drop, shTransitionDrop);
+
+@keyframes shTransitionDropIn {
+    0% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes shTransitionDropOut {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(0.8);
+    }
+}
+
+
 
 .rotate-motion(@className, @deg) {
   .transform {
@@ -221,5 +310,70 @@ export default {
     background-color: #409eff;
     color: #fff;
   }
+}
+
+.vue-tree {
+  user-select: none;
+  position: relative;
+  .drop-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: @primary-color;
+  }
+  .child-node {
+    padding-left: 22px;
+    line-height: 28px;
+    cursor: pointer;
+    .node-content {
+      width: 100%;
+      position: relative;
+      display: inline-block;
+      padding-left: 22px;
+      .icon {
+        position: absolute;
+        display: inline-block;
+        left: 0px;
+        &-expand {
+          color: @normal-color;
+        }
+        &-unexpand {
+          color: @unimportance-color;
+        }
+      }
+      .inner-wrap {
+        padding-left: 2px;
+        display: flex;
+        align-items: center;
+        border-radius: @border-radius-small;
+        border: 1px solid transparent;
+      }
+      .drop-wrap {
+        border-color: @primary-color;
+      }
+      .drop-inner {
+        border-bottom: 1px solid @primary-color;
+      }
+    }
+    .active-li {
+      .inner-wrap {
+        background: @background-color-base;
+      }
+    }
+    .inset {
+      cursor: move;
+    }
+    .disabled {
+      cursor: no-drop;
+    }
+  }
+  .add-node {
+    cursor: pointer;
+  }
+.is-drop-inner > .node-content > .inner-wrap > .node-name {
+  background-color: @primary-color;
+  color: #fff;
+}
 }
 </style>

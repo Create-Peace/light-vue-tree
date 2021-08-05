@@ -329,7 +329,7 @@ export default {
     .node-content {
       width: 100%;
       position: relative;
-      display: inline-block;
+      display: flex;
       padding-left: 22px;
       .icon {
         position: absolute;

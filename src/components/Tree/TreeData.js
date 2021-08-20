@@ -1,4 +1,15 @@
-const TREE_DATA = { checked: false, partialSelected: false, expanded: false, visible: true, exceptDisabledChecked: false }
+const TREE_DATA = {
+  checked: false,
+  partialSelected: false,
+  expanded: false,
+  visible: true,
+  exceptDisabledChecked: false,
+  isLeaf: false,
+  isSearchAdd: false,
+  isSearchingAdd: false,
+  level: 0,
+  selected: false // 设置multiple使用
+}
 export default class TreeData {
   constructor (data) {
     this.data = { ...TREE_DATA, ...data }
@@ -7,18 +18,32 @@ export default class TreeData {
   setParent (node) {
     this.parent = node
   }
+  prependChild (node) {
+    if (this === node) return
+    node.setParent(this)
+    this.children.unshift(node)
+  }
   addChild (node) {
     if (this === node) return
     this.children.push(node)
     node.setParent(this)
   }
   isExceptDisabledChecked () {
-    return this.children && this.children.length ? this.children.every(child => {
-      return child.data.disabled || child.data.checked || child.data.exceptDisabledChecked
-    }) : this.data.checked
+    return this.children && this.children.length
+      ? this.children.every((child) => {
+        return (
+          child.data.disabled ||
+            child.data.checked ||
+            child.data.exceptDisabledChecked
+        )
+      })
+      : this.data.checked
+  }
+  isChecked () {
+    return this.data.checked || false
   }
   isSelected () {
-    return this.data.checked || false
+    return this.data.selected || false
   }
   isExpanded () {
     return this.data.expanded || false
@@ -30,11 +55,11 @@ export default class TreeData {
   isAllChildrenSelected () {
     // eslint-disable-next-line no-debugger
     // debugger
-    return this.children.every((child) => child.isSelected())
+    return this.children.every((child) => child.isChecked())
   }
   hasChildrenPartialSelected () {
     return this.children.some(
-      (child) => child.isSelected() || child.isPartialSelected()
+      (child) => child.isChecked() || child.isPartialSelected()
     )
   }
   contains (target, deep = true) {

@@ -1,16 +1,8 @@
 import TreeData from './TreeData'
-
 import TreeNode from './TreeNode'
-import { addClass, findNearestComponent, removeClass } from '../utils/assist'
-
-const generateNode = (rootNode, props) => {
-  const { children, ...rest } = rootNode
-  const node = new TreeData({ ...rest, ...props })
-  children && children.forEach((child) => {
-    node.addChild(generateNode(child, props))
-  })
-  return node
-}
+import VirtualTreeList from './VirtualTreeList'
+import GenTree from './GenTree'
+import { addClass, findNearestComponent, removeClass } from '../../utils/assist'
 
 const prefixClass = 'vue-tree'
 
@@ -19,6 +11,7 @@ export default {
   components: {
     TreeNode
   },
+  mixins: [GenTree],
   props: {
     expandedAll: {
       type: Boolean,
@@ -54,20 +47,26 @@ export default {
       default: () => {
         return []
       }
-    }
+    },
+    level: {
+      type: Number,
+      default: 0
+    },
+    lazy: [Boolean],
+    load: [Function],
+    multiple: [Boolean],
+    immediatelyLoad: [Boolean],
+    isEditOption: [Boolean],
+    virtual: [Boolean],
+    isLoading: [Boolean],
+    checkedValue: [Number, String, Array]
   },
   data () {
-    const dataOrr = {
-      children: this.treeData,
-      data: {
-        id: 'root'
-      }
-    }
-
     return {
+      hasSearchResult: false,
       dataMap: {},
       prefixClass,
-      root: generateNode(dataOrr, { expanded: this.expandedAll }),
+      root: {},
       dragInfo: {
         showDropIndicator: false,
         draggingNode: null,
@@ -75,12 +74,42 @@ export default {
         allowDrop: true,
         isInitData: false
       },
+      activatedNode: {},
       checkedNodes: [],
-      checkedNodeKeys: []
+      checkedNodeKeys: [],
+      isSearchingAddNode: {},
+      flatTreeNodes: [],
+      nodeMap: {},
+      syncSelectData: true
     }
   },
   created () {
-    this.initData()
+    if (this.lazy && this.immediatelyLoad) {
+      if (!this.load) {
+        throw new Error('[Tree] when lazy is true, load method must be set')
+      }
+      this.load(this.root, data => {
+        const dataOrr = {
+          children: data,
+          id: 'root',
+          expanded: true
+        }
+        this.root = this.generateTree(dataOrr, { expanded: !this.lazy && this.expandedAll })
+        this.initData()
+      })
+    }
+  },
+  computed: {
+    localeNotFoundText () {
+      if (typeof this.notFoundText === 'undefined') {
+        return '无匹配数据'
+      } else {
+        return this.notFoundText
+      }
+    },
+    isNoData () {
+      return (this.searchVal && !this.hasSearchResult) || (!this.isLoading && (!this.root.children || !this.root.children.length))
+    }
   },
   watch: {
     searchVal: {
@@ -89,10 +118,58 @@ export default {
           this.filter(newVal)
         }
       }
+    },
+    treeData: {
+      handler () {
+        const dataOrr = {
+          children: this.treeData,
+          id: 'root',
+          expanded: true
+        }
+        this.root = this.generateTree(dataOrr, { expanded: !this.lazy && this.expandedAll }) // 懒加载时 默认全部展开失效
+        this.initData()
+        if (this.virtual) {
+          this.getFlatTree()
+        }
+      },
+      immediate: true
     }
   },
   methods: {
+    getFlatTree () {
+      this.flatTreeNodes = this.genFlatTree(this.root)
+    },
+    removeChild (node) {
+      Object.assign(node.data, { checked: false, selected: false })
+      if (this.showCheckbox) {
+        this.refreshNode(node)
+      }
+      node.parent.removeChild(node)
+      this.initData()
+    },
+    appendChild (nodeData, parent) {
+      const treeNode = new TreeData({ ...nodeData, expanded: this.expandedAll }) // TODO this.expandedAll 是不是应该去掉
+      this.nodeMap[nodeData.id] = treeNode
+      parent.addChild(treeNode)
+      this.refreshDown(parent)
+    },
+    // 给手动添加的条目 在root 节点上添加
+    prependChild (nodeData, parent) {
+      if (nodeData instanceof TreeData) {
+        parent.prependChild(nodeData)
+        return
+      }
+      const treeNode = new TreeData({ ...nodeData, expanded: this.expandedAll }) // TODO this.expandedAll 是不是应该去掉
+      this.nodeMap[nodeData.id] = treeNode
+      parent.prependChild(treeNode)
+    },
+    appendChildren (children, parent) {
+      children && children.forEach(child => {
+        this.appendChild(child, parent)
+      })
+    },
     filter (keyWord) {
+      this.hasSearchResult = false
       const walk = (node = this.root) => {
         const { children } = node
         children && children.forEach(child => {
@@ -102,7 +179,10 @@ export default {
             return
           }
           if (child.data && child.data.name && (child.data.name.includes(keyWord))) {
-            Object.assign(child.data, { visible: true, expanded: true })
+            if (!this.hasSearchResult) {
+              this.hasSearchResult = true
+            }
+            Object.assign(child.data, { visible: true, expanded: !this.lazy || (child.children && child.children.length) })
             this.refreshDownVisible(child)
             this.refreshUpVisible(child)
           } else {
@@ -133,16 +213,62 @@ export default {
       this.refreshUpVisible(parent)
     },
     clear () {
-      this.checkedNodes = this.checkedNodes.filter(node => {
+      const checkedNodes = []
+      const removeNodes = []
+      this.checkedNodes.forEach(node => {
         if (!node.disabled) {
-          this.$set(node, 'checked', false)
-          return
+          Object.assign(node, { checked: false, selected: false })
+          const treeNode = this.nodeMap[node.id]
+          removeNodes.push(treeNode)
+        } else {
+          checkedNodes.push(node)
         }
-        return node.disabled
+      })
+      if (this.showCheckbox && !this.checkStrictly) {
+        removeNodes.forEach(node => {
+          this.refreshNode(node)
+        })
+      }
+      this.checkedNodes = checkedNodes
+    },
+    setCheckedNodeKeys (values) {
+      if (Array.isArray(values)) {
+        values.forEach(val => {
+          this.setNodeValue(val)
+        })
+      } else {
+        this.setNodeValue(values)
+      }
+      this.updateSelectValue()
+    },
+    updateSelectValue () {
+      // 向select 更新数据
+      this.$nextTick(() => {
+        if (this.showCheckbox) {
+          this.$emit('on-checked-change', { selectedData: this.checkedNodes })
+        } else {
+          this.checkedNodes.forEach(node => {
+            this.$emit('on-selected-change', node)
+          })
+        }
       })
     },
+    setNodeValue (val) {
+      const node = this.nodeMap[val]
+      if (!node) return
+      if (this.showCheckbox) {
+        Object.assign(node.data, { checked: true })
+        this.refreshNode(node)
+      } else if (this.multiple) {
+        Object.assign(node.data, { selected: true })
+        this.checkedNodes.push(node.data)
+      } else {
+        Object.assign(node.data, { selected: true })
+        this.checkedNodes = [node.data]
+      }
+    },
     removeCheckedNode (node, index) {
-      this.$set(node, 'checked', false)
+      Object.assign(node, { checked: false, selected: false })
       this.checkedNodes.splice(index, 1)
     },
     getCheckedNodes () {
@@ -150,17 +276,17 @@ export default {
     },
     initData () {
       this.recurTree(this.root)
+      if (this.syncSelectData && this.treeData && this.treeData.length && this.checkedValue) {
+        this.syncSelectData = false
+        this.updateSelectValue()
+      }
     },
     recurTree (node) {
-      if (node.isSelected() || (this.hasHalfelEction && node.isPartialSelected())) {
-        if (this.checkStrictly) {
-          this.getCheckedValue(node)
-        } else {
-          // this.refreshUp(node)
-          this.refreshDown(node) //  现在改为了 先下刷新 再向上刷新
-        }
-      } else {
+      if (this.checkStrictly || !this.showCheckbox) {
+        this.getCheckedValue(node)
         node.children && node.children.forEach((child) => this.recurTree(child))
+      } else {
+        this.refreshNode(node)
       }
     },
     refreshExpandedDown (node) {
@@ -174,8 +300,9 @@ export default {
     getCheckedValue (node) {
       if (!node.data || !node.data.id) return
       const index = this.checkedNodes.findIndex(item => item === node.data)
-      if (node.isSelected() || (this.hasHalfelEction && node.isPartialSelected())) {
+      if (node.isChecked() || (!this.showCheckbox && node.isSelected()) || (this.hasHalfelEction && node.isPartialSelected())) {
         if (index < 0) {
+          this.nodeMap[node.data.id] = node
           this.checkedNodes.push(node.data)
         } else {
           this.checkedNodes.splice(index, 1, node.data)
@@ -187,7 +314,7 @@ export default {
     refreshUp (node) {
       const { parent } = node
       this.getCheckedValue(node)
-      if (!parent) return
+      if (!parent || parent.data.id === 'root') return
       const toState = parent.isAllChildrenSelected()
 
       const partialSelected = !toState && parent.hasChildrenPartialSelected()
@@ -199,14 +326,19 @@ export default {
       })
       this.refreshUp(parent)
     },
+    refreshNode (node) {
+      // eslint-disable-next-line no-debugger
+      // debugger
+      this.refreshDown(node)
+    },
     refreshDown (node) {
       const { children } = node
 
-      if ((!children || !children.length)) {
+      if (!children || !children.length) {
         this.refreshUp(node)
         return
       }
-      const toState = node.isSelected()
+      const toState = node.isChecked()
       children && children.forEach((child) => {
         if (!child.data.disabled) {
           Object.assign(child.data, {
@@ -215,7 +347,7 @@ export default {
             exceptDisabledChecked: toState
           })
         }
-        // const fromState = child.isSelected() // 状态一致不向下刷新
+        // const fromState = child.isChecked() // 状态一致不向下刷新
         // if (fromState === toState) {
         //   return
         // }
@@ -227,7 +359,27 @@ export default {
       event.stopPropagation()
     },
     handleClickNode (treeNode) {
-      this.dragInfo.draggingNode = treeNode
+      if (!this.showCheckbox) {
+        this.nodeMap[treeNode.node.data.id] = treeNode.node
+        if (this.multiple) {
+          Object.assign(treeNode.node.data, { selected: !treeNode.node.data.selected })
+          const index = this.checkedNodes.findIndex(checkedNode => checkedNode === treeNode.node.data)
+          if (index < 0) {
+            this.checkedNodes.push(treeNode.node.data)
+          } else {
+            this.checkedNodes.splice(index, 1)
+          }
+        } else {
+          if (this.checkedNodes && this.checkedNodes.length) {
+            const oldActivatedNode = this.checkedNodes[0]
+            Object.assign(this.nodeMap[oldActivatedNode.id].data, { selected: false })
+            this.checkedNodes = []
+          }
+          Object.assign(treeNode.node.data, { selected: true })
+          this.getCheckedValue(treeNode.node)
+        }
+      }
+      this.activatedNode = treeNode.node
       this.$emit('on-selected-change', treeNode.node.data)
     },
     dragStart (event, treeNode) {
@@ -421,21 +573,39 @@ export default {
       dragInfo.dropNode = null
       dragInfo.allowDrop = true
       this.initData()
+    },
+    renderVirtualTree (treeNodes) {
+      return (
+        <VirtualTreeList tree={this} treeNodes={treeNodes} {...{ props: this.$attrs }} />
+      )
+    },
+    renderNormalTree (children) {
+      return (
+        children && children.map(childNode => {
+          return childNode.data.visible && <TreeNode tree={this} node={childNode} />
+        })
+      )
     }
   },
   render () {
     const { children } = this.root
+    const { localeNotFoundText, isNoData, flatTreeNodes, virtual, renderNormalTree, renderVirtualTree } = this
+    const treeNodes = this.virtual ? flatTreeNodes : children
     const { showDropIndicator = false } = this.dragInfo
     return (
-      <div class={prefixClass} style="text-align: left" >
-        {children && children.map((node, index) => {
-          return (node.data.visible && <TreeNode key={(node && node.data && node.data.name) || index} node={node} />)
-        })}
+      <div class={prefixClass} >
+        {
+          virtual ? renderVirtualTree(treeNodes) : renderNormalTree(treeNodes)
+        }
+        <div style={{ display: isNoData ? 'block' : 'none' }}>
+          <ul class={`${prefixClass}-not-found`}>
+            <li>{ localeNotFoundText }</li>
+          </ul>
+        </div>
         <div
           ref="dropIndicator"
           class="drop-indicator"
           style={{ display: showDropIndicator ? 'block' : 'none' }}></div>
-
       </div>
     )
   }

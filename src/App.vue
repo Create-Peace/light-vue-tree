@@ -8,26 +8,12 @@
       draggable
       @on-checkbox-change="handleChangeCheckBox" 
       @on-checked-item="handleChangeItem">
-      <!-- <template v-slot="{node}">
-        <span>{{ node.data.name }}</span>
-        <span class="icon">+</span>
-        <span class="icon">-</span>
-      </template> -->
     </Tree>
-    <!-- <List :data="baseData" bordered /> -->
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-     <!-- <Dropdown @on-click="handleClick" trigger="click">
-        <DropdownMenu transfer slot="dropdownList">
-          <DropdownItem data="上海">上海</DropdownItem>
-          <DropdownItem data="北京">北京</DropdownItem>
-          <DropdownItem data="西安">西安</DropdownItem>
-        </DropdownMenu>
-      </Dropdown> -->
   </div>
 </template>
 
 <script>
-import Tree from './components/Tree'
+import Tree from './components/Tree/Tree'
 import Mock from './utils/mock'
 export default {
   name: 'App',
@@ -376,4 +362,39 @@ export default {
   color: #fff;
 }
 }
+.vue-checkbox {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  &-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    background: transparent
+  }
+  &-indeterminate {
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: #0075ff;
+    z-index: 4;
+    border-radius: 3px;
+    &:after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 2px;
+      background: #fff;;
+      top: 50%;
+      left: 0;
+    }
+  }
+}
+
 </style>

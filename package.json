@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "eslint --fix src --ext .js --ext .vue",
+    "dev": "rollup --config ./scripts/rollup.development.js --watch",
+    "build": "npm run lint && rollup --config ./scripts/rollup.production.js",
+    "dev:docs": "cd example && npm run dev",
+    "build:docs": "cd example && npm run build && cp ../dist/index.js ../docs"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -18,10 +21,24 @@
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-loader": "^4.0.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
     "less": "^4.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "rollup": "^2.1.0",
+    "rollup-plugin-babel": "^4.4.0"
   },
+  "keywords": [
+    "vue",
+    "tree",
+    "big-data",
+    "big-list"
+  ],
   "eslintConfig": {
     "root": true,
     "env": {

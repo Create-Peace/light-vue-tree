@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import bannerString from './rollup.banner'
+import less from 'rollup-plugin-less';
 
 export default {
   external: ['vue'],
@@ -15,6 +16,7 @@ export default {
     banner: bannerString.replace(/\n/, '')
   },
   plugins: [
-    babel()
+    babel({ runtimeHelpers: true }),
+    less({output: 'dist/style/index.css'})
   ]
 }

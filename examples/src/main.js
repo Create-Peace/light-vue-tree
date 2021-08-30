@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-// import shscUI from 'shsc-ui'
+import router from './router'
+
 
 Vue.config.productionTip = false
-// Vue.use(shscUI)
 
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')

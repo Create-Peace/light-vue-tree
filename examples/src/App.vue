@@ -1,6 +1,25 @@
 <template>
   <div id="app">
-    <Tree 
+     <div id="nav">
+      <router-link to="/">home</router-link>
+      <span class="line">|</span>
+      <router-link to="/fixed-size">fixed size</router-link>
+      <span class="line">|</span>
+      <router-link to="/dynamic-size">dynamic size</router-link>
+      <span class="line">|</span>
+      <router-link to="/horizontal">horizontal</router-link>
+      <span class="line">|</span>
+      <router-link to="/infinite-loading">infinite loading</router-link>
+      <span class="line">|</span>
+      <router-link to="/keep-state">keep state</router-link>
+      <span class="line">|</span>
+      <router-link to="/page-mode">page mode</router-link>
+      <span class="line">|</span>
+      <router-link to="/chat-room">chat room</router-link>
+    </div>
+    <router-view />
+  
+    <!-- <Tree 
       :tree-data="demeData" 
       expandedAll
       show-checkbox 
@@ -8,18 +27,13 @@
       draggable
       @on-checkbox-change="handleChangeCheckBox" 
       @on-checked-item="handleChangeItem">
-    </Tree>
+    </Tree> -->
   </div>
 </template>
 
 <script>
-import Tree from './components/Tree/Tree'
-import Mock from './utils/mock'
 export default {
   name: 'App',
-  components: {
-    Tree
-  },
   data () {
     return {
       visible: true,
@@ -128,7 +142,7 @@ export default {
     }
   },
   created () {
-    this.genBaseData()
+    // this.genBaseData()
     console.log(this.baseData)
   },
   methods: {
@@ -136,20 +150,20 @@ export default {
       this.visible = !this.visible
     },
     genBaseData () {
-        const start = Math.round(Math.random())
-        const end = start + Math.round(Math.random() * 4)
-        const res = Mock.mock({
-          'data|10': [
-            {
-              'id': /[a-z]{2}[A-Z]{2}[0-9]/,
-              'status|1': ['success', 'fail'],
-              'tags|1-2': ['success', 'normal', 'warning', 'error'].slice(start, end),
-              'time': '@date("yyyy-MM-dd")',
-              'name': "@ctitle(4,6)",
-            }
-          ]
-        })
-        this.baseData = res.data
+        // 
+        // const res = Mock.mock({
+        //   'data|10': [
+        //     {const start = Math.round(Math.random())
+        // const end = start + Math.round(Math.random() * 4)
+        //       'id': /[a-z]{2}[A-Z]{2}[0-9]/,
+        //       'status|1': ['success', 'fail'],
+        //       'tags|1-2': ['success', 'normal', 'warning', 'error'].slice(start, end),
+        //       'time': '@date("yyyy-MM-dd")',
+        //       'name': "@ctitle(4,6)",
+        //     }
+        //   ]
+        // })
+        // this.baseData = res.data
       },
     handleClick (data) {
       console.log(data)
@@ -169,10 +183,11 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  /* text-align: center; */
   color: #2c3e50;
   margin-top: 60px;
 }
+
 </style>
 <style lang="less">
 @transition-time        : .2s;
@@ -181,6 +196,60 @@ export default {
 @normal-color: #1F2E4D;
 @unimportance-color: #b7beca;
 @border-radius-small    : 3px;
+
+#nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #9b4cca;
+  color: #fff;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding-left: 1em;
+  white-space: nowrap;
+  overflow-x: auto;
+  z-index: 2;
+  @media (max-width: 640px) {
+    padding: 0;
+    position: relative;
+    background-color: unset;
+    color: unset;
+    height: unset;
+    padding-left: unset;
+    align-items: unset;
+  }
+  a {
+    display: inline-block;
+    color: #fff;
+    @media (max-width: 640px) {
+      margin-bottom: 0;
+      margin-right: 1em;
+      color: #9b4dca;
+    }
+  }
+  .line {
+    margin: 0 1em;
+    font-size: 14px;
+    color: pink;
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+  .router-link-exact-active,
+  .router-link-exact-active:hover {
+    color: inherit;
+    cursor: default;
+    text-decoration: underline;
+    @media (max-width: 640px) {
+      border-bottom: 1px solid;
+      border-color: #606c76;
+      text-decoration: none;
+    }
+
+  }
+}
 
 .frame {
   // position: absolute;

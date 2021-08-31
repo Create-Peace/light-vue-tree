@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
     "lint": "eslint --fix src --ext .js --ext .vue",
     "dev": "rollup --config ./scripts/rollup.development.js --watch",
     "build": "npm run lint && rollup --config ./scripts/rollup.production.js",
     "dev:docs": "cd examples && npm run dev",
     "build:docs": "cd examples && npm run build && cp ../dist/index.js ../docs"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "core-js": "^3.6.5",
     "less-loader": "^6.0.0",
@@ -48,7 +50,9 @@
     "vue",
     "tree",
     "big-data",
-    "big-list"
+    "big-tree",
+    "virtual-tree",
+    "vue-virtual-tree"
   ],
   "eslintConfig": {
     "root": true,

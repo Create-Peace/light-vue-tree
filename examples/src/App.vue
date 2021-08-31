@@ -190,12 +190,7 @@ export default {
 
 </style>
 <style lang="less">
-@transition-time        : .2s;
-@primary-color: #409eff;
-@background-color-base: #F1F3F5;
-@normal-color: #1F2E4D;
-@unimportance-color: #b7beca;
-@border-radius-small    : 3px;
+
 
 #nav {
   position: fixed;

@@ -4,7 +4,9 @@ import VueTree from '../../lib'
 import '../../lib/style/index.css'
 import router from './router'
 
-Vue.use(VueTree)
+console.log(VueTree)
+
+Vue.component(VueTree.name, VueTree)
 
 
 Vue.config.productionTip = false

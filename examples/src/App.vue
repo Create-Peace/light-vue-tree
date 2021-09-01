@@ -1,21 +1,17 @@
 <template>
   <div id="app">
      <div id="nav">
-      <router-link to="/">home</router-link>
+      <router-link to="/">base</router-link>
       <span class="line">|</span>
-      <router-link to="/fixed-size">fixed size</router-link>
+      <router-link to="/check">check</router-link>
       <span class="line">|</span>
-      <router-link to="/dynamic-size">dynamic size</router-link>
+      <router-link to="/checkStrictly">checkStrictly</router-link>
       <span class="line">|</span>
-      <router-link to="/horizontal">horizontal</router-link>
+      <router-link to="/loadLazy">loadLazy</router-link>
       <span class="line">|</span>
-      <router-link to="/infinite-loading">infinite loading</router-link>
+      <router-link to="/custom">custom</router-link>
       <span class="line">|</span>
-      <router-link to="/keep-state">keep state</router-link>
-      <span class="line">|</span>
-      <router-link to="/page-mode">page mode</router-link>
-      <span class="line">|</span>
-      <router-link to="/chat-room">chat room</router-link>
+      <router-link to="/virtualTree">virtualTree</router-link>
     </div>
     <router-view />
   

@@ -7,7 +7,7 @@ export default {
   input: './src/components/Tree/index.js',
   output: {
     format: 'umd',
-    file: './dist/index.js',
+    file: './lib/index.js',
     name: 'VueTree',
     sourcemap: false,
     globals: {
@@ -16,7 +16,7 @@ export default {
     banner: bannerString.replace(/\n/, '')
   },
   plugins: [
-    babel({ runtimeHelpers: true }),
-    less({output: 'dist/style/index.css'})
+    babel({ exclude: 'node_modules/**', runtimeHelpers: true }),
+    less({output: './lib/style/index.css'})
   ]
 }

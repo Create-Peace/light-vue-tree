@@ -96,6 +96,7 @@
   position: absolute;
   display: inline-block;
   left: 0px;
+  font-size: 12px;
 }
 .vue-tree .child-node .node-content .icon-expand {
   color: #1F2E4D;

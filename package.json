@@ -1,7 +1,6 @@
 {
-  "name": "test-shsc",
+  "name": "vue-tree",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "lint": "eslint --fix src --ext .js --ext .vue",
     "dev": "rollup --config ./scripts/rollup.development.js --watch",

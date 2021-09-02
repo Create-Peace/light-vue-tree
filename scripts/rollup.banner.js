@@ -3,7 +3,7 @@ const version = packageJson.version
 
 export default `
 /*!
- * vue-tree v${version}
+ * light-vue-tree v${version}
  * open source under the MIT license
  */
 `

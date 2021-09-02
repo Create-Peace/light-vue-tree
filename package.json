@@ -1,6 +1,6 @@
 {
-  "name": "vue-light-tree",
-  "version": "0.1.0",
+  "name": "light-vue-tree",
+  "version": "0.1.1",
   "scripts": {
     "lint": "eslint --fix src --ext .js --ext .vue",
     "dev": "rollup --config ./scripts/rollup.development.js --watch",

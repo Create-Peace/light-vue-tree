@@ -2,7 +2,7 @@
 
 ## Simple usage
 ```bash
- npm install vue-light-tree
+ npm install light-vue-tree
 ```
 
 

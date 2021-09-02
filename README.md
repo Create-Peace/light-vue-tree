@@ -45,3 +45,5 @@ Property | Type | Description | Params
 ## Contributions
 
 Welcome to improve this component with any issue, pull request or code review.
+## License
+[MIT License](https://github.com/Create-Peace/vue-tree/blob/master/LICENSE).

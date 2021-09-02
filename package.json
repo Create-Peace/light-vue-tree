@@ -1,5 +1,5 @@
 {
-  "name": "vue-tree",
+  "name": "vue-light-tree",
   "version": "0.1.0",
   "scripts": {
     "lint": "eslint --fix src --ext .js --ext .vue",

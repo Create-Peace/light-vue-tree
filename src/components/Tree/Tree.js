@@ -3,11 +3,12 @@ import TreeNode from './TreeNode'
 import VirtualTreeList from './VirtualTreeList'
 import GenTree from './GenTree'
 import { addClass, findNearestComponent, removeClass } from '../../utils/assist'
+import './styles/index.less'
 
 const prefixClass = 'vue-tree'
 
 export default {
-  name: 'Tree',
+  name: 'VueTree',
   components: {
     TreeNode
   },

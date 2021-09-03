@@ -4,8 +4,6 @@ import VueTree from '../../lib'
 import '../../lib/style/index.css'
 import router from './router'
 
-console.log(VueTree)
-
 Vue.component(VueTree.name, VueTree)
 
 

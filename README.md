@@ -1,5 +1,7 @@
 ## Tree component based on Vue implementation
 
+* Support drag, check, multiple check, bigData virtual scroll, lazy load, checkStrictly, add and delete node, etc.
+
 ## Simple usage
 ```bash
  npm install light-vue-tree
@@ -46,6 +48,8 @@ export default {
 
 * Big data list with high render performance and efficient.
 
+* Can Customize following components (e.g. checkbox, expand icon, loading)
+
 
 ## Api
 
@@ -76,6 +80,13 @@ Property | Type | Description | Params
  on-checked-item    | function | Callback function for when the user check node | function({ node, vNode })
  on-checked-change  | function | Callback function for when checkbox change |function({ node, selectedData })
 
+ Scoped Slot
+
+ name | Description
+ -- | --
+ loading | customize loading component, params`({loading})`
+ check   | customize check component, params`({handleClickCheckBox, selectToggle, node})`
+expandIcon | customize expand icon and unexpanded icon, params`({ expanded, toggleFoldCb: toggleFold })`
 
 ## Contributions
 

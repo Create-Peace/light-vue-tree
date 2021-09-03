@@ -2,10 +2,10 @@
   <div class="test-tree">
     <VueTree
       ref="tree"
-      :height="200"
+      :height="300"
       draggable
       virtual
-      :keeps="50"
+      :keeps="100"
       :treeData="bigTreeData"
       expandedAll
       @on-drop="dropNode"

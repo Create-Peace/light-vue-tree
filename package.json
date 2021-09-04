@@ -9,7 +9,7 @@
     "build:docs": "cd examples && npm run build && cp ../dist/index.js ../docs"
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "dependencies": {
     "core-js": "^3.6.5",

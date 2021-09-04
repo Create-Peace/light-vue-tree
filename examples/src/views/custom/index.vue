@@ -4,11 +4,18 @@
         ref="tree4"
         :treeData="treeData"
         showCheckbox>
+
         <template v-slot="{ node, treeNode }">
           <span style="color: #f00">{{node.name}}</span> 
           <a class="link-color ml20" @click.stop="handleAddChild(treeNode)">增加</a>
           <a class="link-color ml20" @click.stop="handleRemoveChild(treeNode)">删除</a>
           <a class="link-color ml20" @click.stop="toggleDisable(node)">{{ node.disabled ? '开启' : '禁用'}}</a>
+        </template>
+        <template #expandIcon="{expanded, toggleFold, node}">
+          <div style="padding: 2px">
+            <div @click="toggleFold(node)" v-if="expanded">+</div>
+            <div @click="toggleFold(node)" v-else>-</div>
+          </div>
         </template>
       </VueTree>
     </div>
@@ -21,8 +28,12 @@ export default {
   name: 'Custom',
   data () {
     return {
-      treeData
+      treeData,
+      count: 0
     }
+  },
+  updated () {
+    console.log('updated')
   },
   methods: {
     handleAddChild(treeNode) {

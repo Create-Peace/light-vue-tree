@@ -74,14 +74,14 @@ export default {
       e.stopPropagation()
     },
     renderExpandSlot () {
-      const { expandIcon: expandIconSlot } = this.tree
+      const { $scopedSlots: { expandIcon: expandIconSlot } } = this.tree
       const { node, toggleFold, visibleExpand } = this
       const { expanded } = node.data
-      return expandIconSlot ? expandIconSlot({ expanded, toggleFoldCb: toggleFold }) : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} style={{ display: visibleExpand }}>▼</span>)
+      return expandIconSlot ? <div style={{ display: visibleExpand }}>{expandIconSlot({ expanded, node, toggleFold })}</div> : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>)
     },
     renderCheckbox () {
       const { node, handleClickCheckBox, selectToggle } = this
-      const { checkbox: checkboxSlot, showCheckbox } = this.tree
+      const { $scopedSlots: { checkbox: checkboxSlot }, showCheckbox } = this.tree
       const { checked, partialSelected, exceptDisabledChecked, disabled, } = node.data
       return showCheckbox ? checkboxSlot ? checkboxSlot({handleClickCheckBox, selectToggle, node: node.data }) : (<Checkbox
         value={checked}
@@ -93,7 +93,7 @@ export default {
         onChange={(val) => selectToggle(val, node)} />) : null
     },
     renderLoading () {
-      const { loading: loadingSlot } = this.tree
+      const { $scopedSlots: { loading: loadingSlot } } = this.tree
       const { loading } = this
       return loading? loadingSlot ? loadingSlot({ loading }) : (<div>↻</div>) : null
     },

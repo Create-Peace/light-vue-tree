@@ -5,7 +5,11 @@
         lazy
         immediatelyLoad
         :load="loadMore"
-       />
+       >
+       <template #loading="{loading}">
+         <div v-if="loading" id="circle"></div>
+       </template>
+       </VueTree>
     </div>
 </template>
 <script>
@@ -34,3 +38,19 @@ export default {
 }
 
 </script>
+<style>
+#circle{
+    display: inline-block;
+    margin: 20px auto;
+    width: 10px;
+    height: 10px;
+    border: 2px white solid;
+    border-left-color: #ff5500;
+    border-right-color:#0c80fe;
+    border-radius: 100%;
+    animation: loading1 1s infinite linear;
+}
+@keyframes loading1{
+    from{transform: rotate(0deg)}to{transform: rotate(360deg)}
+}
+</style>

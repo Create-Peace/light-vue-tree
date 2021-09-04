@@ -42,6 +42,12 @@ export default {
 
 ```
 
+## Screenshots
+
+Virtual tree render big data (100000 node):
+
+<img src="./screenshots/virtualTree@2x.png">
+
 
 ## Advantages
 * Simple and very easy to use.

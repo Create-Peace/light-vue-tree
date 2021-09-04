@@ -86,7 +86,7 @@ Property | Type | Description | Params
  -- | --
  loading | customize loading component, params`({loading})`
  check   | customize check component, params`({handleClickCheckBox, selectToggle, node})`
-expandIcon | customize expand icon and unexpanded icon, params`({ expanded, toggleFoldCb: toggleFold })`
+expandIcon | customize expand icon and unexpanded icon, params`({ expanded, toggleFold })`
 
 ## Contributions
 

@@ -1,4 +1,5 @@
-export const treeData = [
+export const treeData = 
+[
   {
     name: '一级 1',
     id: '1',

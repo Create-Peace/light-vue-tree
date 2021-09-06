@@ -72,29 +72,54 @@ export default {
     },
     handleClickCheckBox (e) {
       e.stopPropagation()
+    },
+    renderExpandSlot () {
+      const { $scopedSlots: { expandIcon: expandIconSlot } } = this.tree
+      const { node, toggleFold, visibleExpand } = this
+      const { expanded } = node.data
+      return expandIconSlot ? <div style={{ display: visibleExpand }}>{expandIconSlot({ expanded, node, toggleFold })}</div> : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>)
+    },
+    renderCheckbox () {
+      const { node, handleClickCheckBox, selectToggle } = this
+      const { $scopedSlots: { checkbox: checkboxSlot }, showCheckbox } = this.tree
+      const { checked, partialSelected, exceptDisabledChecked, disabled, } = node.data
+      return showCheckbox ? checkboxSlot ? checkboxSlot({handleClickCheckBox, selectToggle, node: node.data }) : (<Checkbox
+        value={checked}
+        style="margin-right: 10px;"
+        indeterminate={partialSelected}
+        key={exceptDisabledChecked}
+        disabled={disabled}
+        nativeOnClick={handleClickCheckBox}
+        onChange={(val) => selectToggle(val, node)} />) : null
+    },
+    renderLoading () {
+      const { $scopedSlots: { loading: loadingSlot } } = this.tree
+      const { loading } = this
+      return loading? loadingSlot ? loadingSlot({ loading }) : (<div>↻</div>) : null
+    },
+    renderNodeName () {
+      const { tree, node} = this
+      const { name } = node.data
+      const { renderTreeNode, $scopedSlots: { default: defaultSlot } } = tree
+
+      return renderTreeNode ? renderTreeNode(node.data) : defaultSlot ? defaultSlot({ node: node.data, treeNode: node }) : <span>{name}</span> 
     }
   },
   render () {
-    const { tree, node, loading, clickContent, handleClickCheckBox, activeNode, visibleExpand } = this
-    const { name, checked, disabled, partialSelected, expanded, exceptDisabledChecked } = node.data || {}
-    const { renderTreeNode, $scopedSlots: { default: defaultSlot }, showCheckbox } = tree
+    const { clickContent, activeNode, renderExpandSlot, renderCheckbox, renderLoading, renderNodeName } = this
+
     return (<div
       class={['node-content', { 'active-li': activeNode }]}
     >
-      {<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => this.toggleFold(node)} style={{ display: visibleExpand }}>▼</span> }
+      {renderExpandSlot()}
       <div class={['inner-wrap']} onClick={clickContent}>
         {
-          showCheckbox && <Checkbox
-            value={checked}
-            style="margin-right: 10px;"
-            indeterminate={partialSelected}
-            key={exceptDisabledChecked}
-            disabled={disabled}
-            nativeOnClick={handleClickCheckBox}
-            onChange={(val) => this.selectToggle(val, node)} />
+          renderCheckbox()
         }
-        { loading && <div loading>↻</div> }
-        <div class='node-name'>{ renderTreeNode ? renderTreeNode(node.data) : defaultSlot ? defaultSlot({ node: node.data, treeNode: node }) : <span>{name}</span> }</div>
+        { renderLoading()}
+        <div class='node-name'>
+          { renderNodeName() }
+        </div>
       </div>
     </div>)
   }

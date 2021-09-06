@@ -3,11 +3,12 @@ import TreeNode from './TreeNode'
 import VirtualTreeList from './VirtualTreeList'
 import GenTree from './GenTree'
 import { addClass, findNearestComponent, removeClass } from '../../utils/assist'
+import './styles/index.less'
 
 const prefixClass = 'vue-tree'
 
 export default {
-  name: 'Tree',
+  name: 'VueTree',
   components: {
     TreeNode
   },
@@ -282,11 +283,14 @@ export default {
       }
     },
     recurTree (node) {
-      if (this.checkStrictly || !this.showCheckbox) {
-        this.getCheckedValue(node)
-        node.children && node.children.forEach((child) => this.recurTree(child))
+      if (node.isSelected() || node.isChecked() || (this.hasHalfelEction && node.isPartialSelected())) {
+        if (this.checkStrictly || !this.showCheckbox) {
+          this.getCheckedValue(node)
+        } else {
+          this.refreshNode(node) //  现在改为了 先下刷新 再向上刷新
+        }
       } else {
-        this.refreshNode(node)
+        node.children && node.children.forEach((child) => this.recurTree(child))
       }
     },
     refreshExpandedDown (node) {

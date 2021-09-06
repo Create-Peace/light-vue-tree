@@ -21,7 +21,7 @@ export default {
   },
   computed: {
     conStyles: function () {
-      return this.height ? { height: `${this.height}px` } : { height: 'auto' }
+      return this.height ? { height: `${this.height}px`, overflow: 'scroll' } : { height: 'auto' }
     }
   },
   methods: {

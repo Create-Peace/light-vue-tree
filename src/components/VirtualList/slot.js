@@ -6,14 +6,13 @@ export default {
   mixins: [Wrapper],
   props: SlotProps,
 
-  render (h) {
+  render () {
     const { tag, uniqueKey } = this
+    const Wrapper = tag || 'div'
 
-    return h(tag, {
-      key: uniqueKey,
-      attrs: {
-        role: uniqueKey
-      }
-    }, this.$slots.default)
+
+    return <Wrapper key={uniqueKey} role={uniqueKey} >
+      {this.$slots.default}
+    </Wrapper>
   }
 }

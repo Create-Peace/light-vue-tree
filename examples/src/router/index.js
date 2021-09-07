@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Base from '../views/base/index.vue'
-import Check from '../views/check/index.vue'
-import CheckStrictly from '../views/checkStrictly/index.vue'
-import LoadLazy from '../views/loadLazy/index.vue'
-import Custom from '../views/custom/index.vue'
-import VirtualTree from '../views/virtualTree/index.vue'
+const Check = () => import('../views/check/index.vue')
+const CheckStrictly = () => import('../views/checkStrictly/index.vue')
+const LoadLazy = () => import('../views/loadLazy/index.vue')
+const Custom = () => import('../views/custom/index.vue')
+const VirtualTree = () => import('../views/virtualTree/index.vue')
 
 
 Vue.use(VueRouter)

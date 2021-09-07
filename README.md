@@ -46,7 +46,11 @@ export default {
 
 Virtual tree render big data (100000 node):
 
-<img src="./screenshots/virtualTree@2x.png">
+<img src="./screenshots/virtualTree.png">
+
+checkbox:
+
+<img src="./screenshots/check.png">
 
 
 ## Advantages

@@ -19,7 +19,9 @@
   "peerDependencies": {
     "vue": "^2.6.11"
   },
-  "dependencies": {},
+  "dependencies": {
+    "core-js": "^3.6.5"
+  },
   "devDependencies": {
     "@babel/core": "^7.8.7",
     "@babel/preset-env": "^7.8.7",
@@ -45,7 +47,6 @@
     "rollup-plugin-babel": "^4.4.0",
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.11",
-    "core-js": "^3.6.5",
     "less-loader": "^6.0.0",
     "rollup-plugin-less": "^1.1.3",
     "vue-router": "^3.5.2"

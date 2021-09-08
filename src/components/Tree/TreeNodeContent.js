@@ -70,11 +70,11 @@ export default {
     handleClickCheckBox (e) {
       e.stopPropagation()
     },
-    renderExpandSlot () {
-      const { $scopedSlots: { expandIcon: expandIconSlot } } = this.tree
+    renderExpand () {
+      const { $scopedSlots: { expandIcon: expandIconSlot }, lazy } = this.tree
       const { node, toggleFold, visibleExpand } = this
-      const { data: { expanded }, children } = node
-      return children && children.length ? expandIconSlot ? <div style={{ display: visibleExpand }}>{expandIconSlot({ expanded, node, toggleFold })}</div> : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>) : null
+      const { data: { expanded, isLeaf }, children } = node
+      return (children && children.length) || (lazy && !isLeaf) ? expandIconSlot ? <div style={{ display: visibleExpand }}>{expandIconSlot({ expanded, node, toggleFold })}</div> : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>) : null
     },
     renderCheckbox () {
       const { node, handleClickCheckBox, selectToggle } = this
@@ -103,12 +103,12 @@ export default {
     }
   },
   render () {
-    const { clickContent, activeNode, renderExpandSlot, renderCheckbox, renderLoading, renderNodeName } = this
+    const { clickContent, activeNode, renderExpand, renderCheckbox, renderLoading, renderNodeName } = this
 
     return (<div
       class={['node-content', { 'active-li': activeNode }]}
     >
-      {renderExpandSlot()}
+      {renderExpand()}
       <div class={['inner-wrap']} onClick={clickContent}>
         {
           renderCheckbox()

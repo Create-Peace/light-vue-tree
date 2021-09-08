@@ -49,7 +49,6 @@ export default {
       }
     },
     selectToggle (val, node) {
-      console.log('val:::', val)
       if (!this.tree.checkStrictly) {
         const exceptDisabledChecked = node.isExceptDisabledChecked()
         Object.assign(node.data, { checked: !exceptDisabledChecked, exceptDisabledChecked: !exceptDisabledChecked })
@@ -64,10 +63,8 @@ export default {
         this.tree.$emit('on-checked-change', { node: node.data, selectedData: this.tree.checkedNodes })
         this.tree.$emit('on-checked-item', { node: node.data, vNode: this })
       }
-      console.log('this.tree.checkedNodes:::', this.tree.checkedNodes)
     },
     clickContent () {
-      console.log('clickContent')
       this.tree.handleClickNode(this)
     },
     handleClickCheckBox (e) {

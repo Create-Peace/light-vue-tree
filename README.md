@@ -42,6 +42,11 @@ export default {
 
 ```
 
+## Live Demo
+* [base](https://codepen.io/create-peace/pen/RwgGKjP)
+* [checkbox](https://codepen.io/create-peace/pen/GREmGaO)
+* [virtual Scroll](https://codepen.io/create-peace/pen/ExXmpPK)
+
 ## Screenshots
 
 Virtual tree render big data (100000 node):

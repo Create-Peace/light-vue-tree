@@ -93,16 +93,18 @@
   align-items: center;
   padding-left: 22px;
 }
-.vue-tree .child-node .node-content .icon {
+.vue-tree .child-node .node-content .expand_box {
+  height: 100%;
+  overflow: hidden;
   position: absolute;
   display: inline-block;
   left: 0px;
   font-size: 12px;
 }
-.vue-tree .child-node .node-content .icon-expand {
-  color: #1F2E4D;
+.vue-tree .child-node .node-content .expand_box .icon-expand {
+  color: #1f2e4d;
 }
-.vue-tree .child-node .node-content .icon-unexpand {
+.vue-tree .child-node .node-content .expand_box .icon-unexpand {
   color: #b7beca;
 }
 .vue-tree .child-node .node-content .inner-wrap {
@@ -119,7 +121,7 @@
   border-bottom: 1px solid #409eff;
 }
 .vue-tree .child-node .active-li .inner-wrap {
-  background: #F1F3F5;
+  background: #f1f3f5;
 }
 .vue-tree .child-node .inset {
   cursor: move;
@@ -134,12 +136,12 @@
   background-color: #409eff;
   color: #fff;
 }
-.vue-checkbox {
+.vue-tree .vue-checkbox {
   position: relative;
   width: 13px;
   height: 13px;
 }
-.vue-checkbox-input {
+.vue-tree .vue-checkbox-input {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -148,8 +150,9 @@
   z-index: 3;
   margin: 0;
   background: transparent;
+  cursor: pointer;
 }
-.vue-checkbox-indeterminate {
+.vue-tree .vue-checkbox-indeterminate {
   box-sizing: border-box;
   position: absolute;
   width: 100%;
@@ -160,9 +163,9 @@
   z-index: 4;
   border-radius: 3px;
 }
-.vue-checkbox-indeterminate:after {
+.vue-tree .vue-checkbox-indeterminate:after {
   position: absolute;
-  content: '';
+  content: "";
   width: 100%;
   height: 2px;
   background: #fff;

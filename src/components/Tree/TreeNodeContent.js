@@ -74,7 +74,7 @@ export default {
       const { $scopedSlots: { expandIcon: expandIconSlot }, lazy } = this.tree
       const { node, toggleFold, visibleExpand } = this
       const { data: { expanded, isLeaf }, children } = node
-      return (children && children.length) || (lazy && !isLeaf) ? expandIconSlot ? <div style={{ display: visibleExpand }}>{expandIconSlot({ expanded, node, toggleFold })}</div> : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>) : null
+      return <div class="expand_box" style={{ display: visibleExpand }}>{(children && children.length) || (lazy && !isLeaf) ? expandIconSlot ? expandIconSlot({ expanded, node, toggleFold }) : (<span class={['icon', expanded ? 'rotate180-enter icon-expand' : 'rotate180-leave icon-unexpand']} onClick={() => toggleFold(node)} >▼</span>) : null}</div>
     },
     renderCheckbox () {
       const { node, handleClickCheckBox, selectToggle } = this

@@ -498,7 +498,7 @@ export default {
       }
 
       const iconPosition = dropNode.$el
-        .querySelector('.icon')
+        .querySelector('.expand_box')
         .getBoundingClientRect()
       const dropIndicator = this.$refs.dropIndicator
       if (dropType === 'before') {
